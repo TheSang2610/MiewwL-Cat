@@ -74,7 +74,7 @@ function EditProductForm({ product }: { product: Product }) {
   }));
   const [imagesText, setImagesText] = useState(() => product.images.join("\n"));
   const [petFields, setPetFields] = useState<PetFieldValues>(() => ({
-    breed: product.breed || "",
+    breedId: product.breedId || "",
     age: product.age || "",
     gender: product.gender ?? "",
     tags: product.tags.join(", "),

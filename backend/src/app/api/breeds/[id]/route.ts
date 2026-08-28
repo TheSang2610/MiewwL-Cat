@@ -20,13 +20,14 @@ export const GET = handle(async (_req: Request, ctx: Ctx) => {
   const breed = await findBreed(id);
   if (!breed) return fail("Không tìm thấy giống này", 404);
 
-  const available = await prisma.product.count({
-    where: {
-      published: true,
-      stock: { gt: 0 },
-      breed: { equals: breed.name, mode: "insensitive" },
-    },
+  // Đếm theo khoá `breedId` và cộng `stock`, giống hệt danh sách ở
+  // `api/breeds/route.ts` — hai chỗ lệch cách đếm thì trang danh sách và trang
+  // chi tiết sẽ báo hai con số khác nhau cho cùng một giống.
+  const rows = await prisma.product.findMany({
+    where: { published: true, stock: { gt: 0 }, breedId: breed.id },
+    select: { stock: true },
   });
+  const available = rows.reduce((sum, r) => sum + r.stock, 0);
 
   return ok({ ...breed, availableCount: available });
 });

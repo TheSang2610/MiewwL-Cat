@@ -189,6 +189,16 @@ export const api = {
         method: "PATCH",
         body: JSON.stringify({ status }),
       }),
+
+    /**
+     * Chốt giờ hẹn sau khi gọi cho khách. Gửi `null` để xoá giờ đã chốt.
+     * Backend tự chuyển yêu cầu sang "đã xác nhận" khi chốt được giờ.
+     */
+    setSchedule: (id: string, confirmedAt: string | null, staffNote?: string | null) =>
+      request<SpaBooking>(`/spa-bookings/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({ confirmedAt, staffNote }),
+      }),
   },
 
   users: {

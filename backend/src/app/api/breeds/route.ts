@@ -9,8 +9,14 @@ export const dynamic = "force-dynamic";
 /**
  * GET /api/breeds?species=DOG&published=true
  *
- * Mỗi giống kèm `availableCount` — số bé đang bán khớp `Product.breed`
- * (so khớp theo tên, không phân biệt hoa thường).
+ * Mỗi giống kèm `availableCount` — tổng số bé đang còn của giống đó.
+ *
+ * Đếm theo khoá `breedId`, không so khớp theo tên: trước đây sản phẩm ghi
+ * "Poodle" trong khi thư viện tên "Poodle Tiny" thì trượt, trang giống báo hết
+ * bé dù kho còn 5 con.
+ *
+ * Cộng `stock` chứ không đếm số dòng hàng — một dòng "Chó Corgi" tồn 2 nghĩa là
+ * còn 2 bé, không phải 1.
  */
 export const GET = handle(async (req: Request) => {
   const url = new URL(req.url);
@@ -24,22 +30,21 @@ export const GET = handle(async (req: Request) => {
   const [breeds, products] = await Promise.all([
     prisma.breed.findMany({ where, orderBy: [{ position: "asc" }, { name: "asc" }] }),
     prisma.product.findMany({
-      where: { published: true, breed: { not: null } },
-      select: { breed: true, stock: true },
+      where: { published: true, breedId: { not: null }, stock: { gt: 0 } },
+      select: { breedId: true, stock: true },
     }),
   ]);
 
   const inStock = new Map<string, number>();
   for (const p of products) {
-    if (!p.breed || p.stock <= 0) continue;
-    const key = p.breed.trim().toLowerCase();
-    inStock.set(key, (inStock.get(key) ?? 0) + 1);
+    if (!p.breedId) continue;
+    inStock.set(p.breedId, (inStock.get(p.breedId) ?? 0) + p.stock);
   }
 
   return ok(
     breeds.map((b) => ({
       ...b,
-      availableCount: inStock.get(b.name.trim().toLowerCase()) ?? 0,
+      availableCount: inStock.get(b.id) ?? 0,
     }))
   );
 });

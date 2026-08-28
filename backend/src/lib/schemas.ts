@@ -30,6 +30,8 @@ export const productInput = z.object({
   description: z.string().default(""),
   images: z.array(imagePath).default([]),
   breed: z.string().optional(),
+  /// Khoá tới thư viện giống. `null` để gỡ liên kết (ví dụ đổi sang đồ dùng).
+  breedId: z.string().nullable().optional(),
   age: z.string().optional(),
   stock: z.number().int().nonnegative().default(0),
   published: z.boolean().default(true),
@@ -63,6 +65,8 @@ export const productPatch = z.object({
   description: z.string().optional(),
   images: z.array(imagePath).optional(),
   breed: z.string().optional(),
+  /// Khoá tới thư viện giống. `null` để gỡ liên kết (ví dụ đổi sang đồ dùng).
+  breedId: z.string().nullable().optional(),
   age: z.string().optional(),
   stock: z.number().int().nonnegative().optional(),
   published: z.boolean().optional(),
@@ -192,9 +196,23 @@ export const spaBookingInput = z.object({
   desiredDate: z.string().min(1, "Thiếu ngày mong muốn"),
 });
 
+/**
+ * Nhân viên sửa một yêu cầu spa sau khi gọi cho khách.
+ *
+ * Cả ba trường đều tuỳ chọn để trang quản trị gửi riêng lẻ: đổi mỗi trạng thái,
+ * hoặc chốt mỗi giờ hẹn, không phải gửi lại toàn bộ.
+ */
 export const spaBookingStatusPatch = z.object({
-  status: z.enum(["PENDING", "CONFIRMED", "CANCELLED"]),
-});
+  status: z.enum(["PENDING", "CONFIRMED", "CANCELLED"]).optional(),
+  /// Giờ hẹn đã chốt, dạng ISO. `null` để xoá giờ đã chốt.
+  confirmedAt: z.string().datetime().nullable().optional(),
+  /// Ghi chú sau cuộc gọi. `null` hoặc chuỗi rỗng để xoá.
+  staffNote: z.string().max(500).nullable().optional(),
+})
+  .refine(
+    (v) => v.status !== undefined || v.confirmedAt !== undefined || v.staffNote !== undefined,
+    { message: "Không có gì để cập nhật" }
+  );
 
 export const loginInput = z.object({
   email: z.string().email(),

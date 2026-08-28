@@ -113,6 +113,10 @@ export const vi = {
   "breedCatalog.dogs": "🐕 Giống chó",
   "breedCatalog.cats": "🐈 Giống mèo",
   "breedCatalog.available": "Đang có {count} bé",
+  "availability.inStock": "Đang có {count} bé",
+  "availability.soldOut": "Tạm hết bé",
+  "availability.askTitle": "Chưa có bé nào của giống này",
+  "availability.askDesc": "Gọi hotline để shop báo ngay khi có bé mới về.",
   "breedCatalog.cta": "Đặt cọc tìm bé →",
 
   // ---- Quy trình ----
@@ -903,6 +907,10 @@ export const en: Record<MessageKey, string> = {
   "breedCatalog.dogs": "🐕 Dog breeds",
   "breedCatalog.cats": "🐈 Cat breeds",
   "breedCatalog.available": "{count} available now",
+  "availability.inStock": "{count} available now",
+  "availability.soldOut": "None available right now",
+  "availability.askTitle": "No pets of this breed right now",
+  "availability.askDesc": "Call our hotline and we'll let you know as soon as one arrives.",
   "breedCatalog.cta": "Reserve with a deposit →",
 
   // ---- Process ----

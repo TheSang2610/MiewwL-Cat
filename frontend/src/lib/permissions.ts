@@ -21,6 +21,8 @@ export const ADMIN_ROUTES: { href: string; roles: Role[] }[] = [
   { href: "/admin-orders", roles: ["STAFF", "ADMIN"] },
   { href: "/admin-spa-bookings", roles: ["STAFF", "ADMIN"] },
   { href: "/admin-products", roles: ["ADMIN"] },
+  { href: "/admin-pets", roles: ["ADMIN"] },
+  { href: "/admin-supplies", roles: ["ADMIN"] },
   { href: "/admin-product-new", roles: ["ADMIN"] },
   { href: "/admin-product-edit", roles: ["ADMIN"] },
   { href: "/admin-breeds", roles: ["ADMIN"] },

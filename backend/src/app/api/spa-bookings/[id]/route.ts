@@ -18,7 +18,21 @@ export const PATCH = handle(async (req: Request, ctx: Ctx) => {
 
   const booking = await prisma.spaBooking.update({
     where: { id },
-    data: { status: body.status },
+    data: {
+      ...(body.status !== undefined ? { status: body.status } : {}),
+      ...(body.confirmedAt !== undefined
+        ? { confirmedAt: body.confirmedAt ? new Date(body.confirmedAt) : null }
+        : {}),
+      ...(body.staffNote !== undefined
+        ? { staffNote: body.staffNote?.trim() || null }
+        : {}),
+      // Chốt được giờ hẹn nghĩa là đã gọi và khách đồng ý, nên chuyển sang đã
+      // xác nhận luôn — bắt nhân viên bấm thêm một nút nữa chỉ tạo ra những
+      // lịch có giờ mà vẫn nằm ở "chờ gọi".
+      ...(body.confirmedAt && body.status === undefined && existing.status === "PENDING"
+        ? { status: "CONFIRMED" as const }
+        : {}),
+    },
   });
 
   return ok(booking);

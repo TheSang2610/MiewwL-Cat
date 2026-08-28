@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { breedLinkData } from "@/lib/breed-link";
 import { handle, ok, fail } from "@/lib/http";
 import { requireRole } from "@/lib/auth";
 import { productPatch, slugify } from "@/lib/schemas";
@@ -26,6 +27,8 @@ export const PUT = handle(async (req: Request, ctx: Ctx) => {
   const existing = await prisma.product.findUnique({ where: { id } });
   if (!existing) return fail("Không tìm thấy sản phẩm", 404);
 
+  const breedFields = await breedLinkData(body.breedId);
+
   const product = await prisma.product.update({
     where: { id },
     data: {
@@ -36,6 +39,9 @@ export const PUT = handle(async (req: Request, ctx: Ctx) => {
       slug:
         body.slug ||
         (body.name && body.name !== existing.name ? slugify(body.name) : undefined),
+      // Sau `...body` để tên giống hiển thị luôn được dựng lại từ giống đã
+      // chọn, chứ không nhận chuỗi client tự gửi.
+      ...breedFields,
     },
     include: { category: true },
   });

@@ -17,7 +17,10 @@ export interface Product {
   description: string;
   price: number;
   images: string[];
+  /** Tên giống để hiển thị. Backend tự điền theo `breedId`, đừng ghi tay. */
   breed?: string | null;
+  /** Khoá tới thư viện giống — thứ quyết định bé hiện ở trang giống nào. */
+  breedId?: string | null;
   age?: string | null;
   stock: number;
   published: boolean;
@@ -245,7 +248,12 @@ export interface SpaBooking {
   weightTier: string;
   serviceName: string;
   estimatedPrice: number;
+  /** Ngày khách tự chọn lúc gửi yêu cầu. Không sửa — để đối chiếu khi có tranh cãi. */
   desiredDate: string;
+  /** Giờ hẹn nhân viên chốt qua điện thoại, dạng ISO. Trống = chưa gọi được. */
+  confirmedAt?: string | null;
+  /** Ghi chú sau cuộc gọi, ví dụ "khách xin dời sang chiều". */
+  staffNote?: string | null;
   status: BookingStatus;
   createdAt: string;
 }

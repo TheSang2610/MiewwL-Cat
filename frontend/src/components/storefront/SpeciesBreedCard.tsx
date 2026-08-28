@@ -6,6 +6,7 @@ import { Breed, BreedSize } from "@/lib/types";
 import { useI18n, formatPrice, MessageKey } from "@/lib/i18n";
 import { useContent, useTranslated } from "@/lib/content-i18n";
 import UsdHint from "./UsdHint";
+import AvailabilityBadge from "./AvailabilityBadge";
 
 const SIZE_KEYS: Record<BreedSize, MessageKey> = {
   SMALL: "size.SMALL",
@@ -35,6 +36,7 @@ export default function SpeciesBreedCard({ breed }: { breed: Breed }) {
           <div className="absolute top-3 right-3 rounded-full border border-brand-gold/20 bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-brand-gold backdrop-blur-sm">
             {t(SIZE_KEYS[breed.size])}
           </div>
+          <AvailabilityBadge count={breed.availableCount} />
         </div>
 
         <div className="flex flex-1 flex-col gap-2.5 p-4">

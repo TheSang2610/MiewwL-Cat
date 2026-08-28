@@ -9,6 +9,7 @@ import { api } from "@/lib/api";
 import { useAsync } from "@/lib/use-async";
 import Gallery from "@/components/storefront/Gallery";
 import PetCard from "@/components/storefront/PetCard";
+import AvailabilityBadge from "@/components/storefront/AvailabilityBadge";
 import { LoadingMessage, ErrorMessage } from "@/components/storefront/StateMessage";
 import { Breed, BreedSize } from "@/lib/types";
 import { useI18n, formatPrice, MessageKey } from "@/lib/i18n";
@@ -156,9 +157,11 @@ function BreedDetail() {
     );
   }
 
-  const inStock = (matches ?? []).filter(
-    (p) => p.breed?.trim().toLowerCase() === breed.name.trim().toLowerCase()
-  );
+  // Khớp theo khoá giống, không so tên. Trước đây so `p.breed` với `breed.name`
+  // nên bé ghi "Poodle" không khớp giống "Poodle Tiny", trang báo hết bé dù kho
+  // còn 5 con.
+  const inStock = (matches ?? []).filter((p) => p.breedId === breed.id && p.stock > 0);
+  const availableCount = inStock.reduce((sum, p) => sum + p.stock, 0);
   const related = (relatedAll ?? []).filter((b) => b.slug !== breed.slug).slice(0, 4);
 
   const isCat = breed.species === "CAT";
@@ -198,6 +201,9 @@ function BreedDetail() {
             <h1 className="mt-3 text-2xl font-extrabold leading-tight text-brand-deep sm:text-3xl md:text-4xl">
               {breed.name}
             </h1>
+            <div className="mt-2">
+              <AvailabilityBadge count={availableCount} variant="inline" />
+            </div>
             {breed.alias && (
               <p className="mt-1 text-sm font-medium text-brand-deep/55 sm:text-base md:text-lg">
                 {tr(breed.alias, breed.aliasEn)}

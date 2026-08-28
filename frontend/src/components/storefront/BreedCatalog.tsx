@@ -10,6 +10,7 @@ import { LoadingMessage, ErrorMessage } from "./StateMessage";
 import { useI18n, formatPrice, Locale, Translate } from "@/lib/i18n";
 import { useContent, useTranslated } from "@/lib/content-i18n";
 import UsdHint from "./UsdHint";
+import AvailabilityBadge from "./AvailabilityBadge";
 
 const FALLBACK_IMAGE = "/placeholder.svg";
 
@@ -44,17 +45,7 @@ function BreedCard({
               sizes="(min-width: 640px) 33vw, 50vw"
               className="object-cover transition-transform duration-500 ease-in-out group-hover:scale-105"
             />
-            {breed.availableCount > 0 && (
-              <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/60 bg-white/85 px-2.5 py-1 shadow-sm backdrop-blur-md">
-                <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-500" />
-                </span>
-                <span className="text-[11px] font-semibold text-brand-deep">
-                  {t("breedCatalog.available", { count: breed.availableCount })}
-                </span>
-              </div>
-            )}
+            <AvailabilityBadge count={breed.availableCount} />
           </div>
 
           <div className="p-3 pb-2 md:p-4 md:pb-2">

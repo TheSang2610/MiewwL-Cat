@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useSpaBookingStore } from "@/store/spa-booking-store";
 import { LoadingMessage, ErrorMessage } from "@/components/storefront/StateMessage";
 import SpaBookingStatusSelect from "./SpaBookingStatusSelect";
+import ScheduleCell from "./ScheduleCell";
 
 export default function AdminSpaBookingsPage() {
   const { bookings, loading, error, fetchBookings } = useSpaBookingStore();
@@ -37,14 +38,15 @@ export default function AdminSpaBookingsPage() {
                   <th className="p-4">Cân nặng</th>
                   <th className="p-4">Dịch vụ</th>
                   <th className="p-4">Giá dự kiến</th>
-                  <th className="p-4">Ngày mong muốn</th>
+                  <th className="p-4">Ngày khách muốn</th>
+                  <th className="p-4">Giờ hẹn đã chốt</th>
                   <th className="p-4">Trạng thái</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-deep/5">
                 {bookings.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="p-6 text-center text-xs text-brand-deep/40">
+                    <td colSpan={9} className="p-6 text-center text-xs text-brand-deep/40">
                       Chưa có yêu cầu giữ chỗ nào.
                     </td>
                   </tr>
@@ -66,6 +68,13 @@ export default function AdminSpaBookingsPage() {
                         {b.estimatedPrice.toLocaleString("vi-VN")} đ
                       </td>
                       <td className="p-4 text-xs text-brand-deep/50">{b.desiredDate}</td>
+                      <td className="p-4">
+                        <ScheduleCell
+                          bookingId={b.id}
+                          confirmedAt={b.confirmedAt}
+                          staffNote={b.staffNote}
+                        />
+                      </td>
                       <td className="p-4">
                         <SpaBookingStatusSelect bookingId={b.id} currentStatus={b.status} />
                       </td>

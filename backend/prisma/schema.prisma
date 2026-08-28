@@ -73,7 +73,15 @@ model SpaBooking {
   weightTier    String
   serviceName   String
   estimatedPrice Float
+  /// Ngày khách tự chọn lúc gửi yêu cầu. Giữ nguyên, không sửa — cần đối chiếu
+  /// khi khách thắc mắc "tôi đặt ngày kia mà".
   desiredDate   String
+  /// Giờ hẹn nhân viên chốt với khách qua điện thoại. Trống nghĩa là chưa gọi
+  /// được. Đây mới là giờ thật để xếp lịch; `desiredDate` chỉ là mong muốn ban
+  /// đầu và khách thường đổi ngay trong cuộc gọi.
+  confirmedAt   DateTime?
+  /// Ghi chú của nhân viên sau khi gọi, ví dụ "khách xin dời sang chiều".
+  staffNote     String?
   status        BookingStatus @default(PENDING)
   createdAt     DateTime      @default(now())
 }
@@ -143,6 +151,11 @@ model Breed {
   published   Boolean  @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  /// Các bé đang bán thuộc giống này. Dùng để đếm "còn mấy bé" trên trang
+  /// giống mà không phải so khớp theo tên.
+  pets Product[]
+
   /// Bản tiếng Anh do shop tự nhập (xem ghi chú ở model Product).
   aliasEn       String?
   descriptionEn String?
@@ -210,6 +223,14 @@ model Product {
 
   categoryId String   @db.ObjectId
   category   Category @relation(fields: [categoryId], references: [id])
+
+  /// Khoá nối tới thư viện giống. Trước đây chỉ có trường `breed` là chuỗi gõ
+  /// tay, nên gõ "Poodle" trong khi thư viện tên "Poodle Tiny" là trượt — trang
+  /// giống báo hết bé dù kho còn. Giờ trang quản trị chọn từ danh sách nên
+  /// không lệch được nữa. `breed` ở trên giữ lại làm tên hiển thị, tự điền
+  /// theo giống đã chọn.
+  breedId  String? @db.ObjectId
+  breedRef Breed?  @relation(fields: [breedId], references: [id])
 
   orderItems OrderItem[]
   /// Bản tiếng Anh do shop tự nhập. Bỏ trống thì site tra từ điển

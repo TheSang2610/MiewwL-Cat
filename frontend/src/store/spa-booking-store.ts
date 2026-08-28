@@ -9,6 +9,7 @@ interface SpaBookingStore {
 
   fetchBookings: () => Promise<void>;
   updateStatus: (id: string, status: BookingStatus) => Promise<void>;
+  setSchedule: (id: string, confirmedAt: string | null, staffNote?: string | null) => Promise<void>;
 }
 
 export const useSpaBookingStore = create<SpaBookingStore>((set, get) => ({
@@ -28,6 +29,11 @@ export const useSpaBookingStore = create<SpaBookingStore>((set, get) => ({
 
   updateStatus: async (id, status) => {
     const booking = await api.spaBookings.updateStatus(id, status);
+    set({ bookings: get().bookings.map((b) => (b.id === id ? booking : b)) });
+  },
+
+  setSchedule: async (id, confirmedAt, staffNote) => {
+    const booking = await api.spaBookings.setSchedule(id, confirmedAt, staffNote);
     set({ bookings: get().bookings.map((b) => (b.id === id ? booking : b)) });
   },
 }));

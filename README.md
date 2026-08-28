@@ -168,6 +168,21 @@ layout: sidebar + chặn theo vai trò.
 
 ## 4. Những việc hay phải làm
 
+### Ba khái niệm, đừng lẫn
+
+| Trong trang quản trị | Là gì | Ví dụ |
+|---|---|---|
+| **Bé đang bán** | Từng con vật có thật trong cửa hàng, có giá và tồn kho | "Chó Corgi — Chân Ngắn Đuôi Cụt", còn 2 bé |
+| **Đồ dùng & dịch vụ** | Thức ăn, phụ kiện, gói spa | "Cát vệ sinh Tofu", "Gói Spa cơ bản" |
+| **Thư viện giống** | Thông tin tra cứu về một giống — không phải hàng trong kho | "Corgi": nguồn gốc, cân nặng, cách chăm |
+
+Mỗi bé đang bán **chọn một giống** từ Thư viện giống. Chính liên kết đó quyết định
+bé hiện ở trang giống nào, và giống đó báo "Đang có N bé" hay "Tạm hết bé".
+
+Trước đây ô Giống là ô gõ tay, nên gõ "Poodle" trong khi thư viện tên "Poodle
+Tiny" là trượt: trang Poodle Tiny báo hết bé dù kho còn 5 con. Giờ là ô chọn từ
+danh sách nên không lệch được nữa.
+
 ### Thêm sản phẩm hoặc bé mới
 Làm ở trang quản trị `/admin-product-new`. Nhập tiếng Việt như bình thường.
 Muốn bản tiếng Anh hiện đúng thì thêm một dòng vào
@@ -218,6 +233,14 @@ thoại. Mọi phiên cũ của khách bị đăng xuất ngay. Nhắc khách v�
 Ngay trong form quản trị, mở khối **"Bản tiếng Anh (không bắt buộc)"**. Điền vào
 đó là bản EN hiện đúng ngay, không cần sửa code. Bỏ trống thì site tra từ điển
 `content-en.ts`; không có trong từ điển nữa thì giữ nguyên tiếng Việt.
+
+### Chốt giờ hẹn spa
+Khách chọn "ngày mong muốn" trên máy tính giá `/spa`, nhưng đó mới là mong muốn —
+giờ thật chỉ có sau khi gọi lại, và khách rất hay đổi ngay trong cuộc gọi.
+
+Vào **Yêu cầu Spa**, bấm ô ở cột "Giờ hẹn đã chốt", nhập giờ và ghi chú rồi Lưu.
+Yêu cầu tự chuyển sang "Đã xác nhận". Cột "Ngày khách muốn" giữ nguyên không đổi,
+để còn đối chiếu khi khách thắc mắc.
 
 ### Sao lưu database
 ```bash

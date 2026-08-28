@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   ShoppingBag,
-  PackagePlus,
+  BookOpen,
   ShoppingCart,
   PawPrint,
   Sparkles,
@@ -18,9 +18,13 @@ import LogoutButton from "./LogoutButton";
 
 const NAV_ITEMS: { name: string; href: string; icon: LucideIcon }[] = [
   { name: "Tổng quan", href: "/admin", icon: LayoutDashboard },
-  { name: "Sản phẩm", href: "/admin-products", icon: ShoppingBag },
-  { name: "Thêm sản phẩm", href: "/admin-product-new", icon: PackagePlus },
-  { name: "Giống", href: "/admin-breeds", icon: PawPrint },
+  // Bán một bé chó và bán một bao cát vệ sinh là hai việc khác nhau, nên tách
+  // hẳn hai mục thay vì một bảng "Sản phẩm" trộn cả hai.
+  { name: "Bé đang bán", href: "/admin-pets", icon: PawPrint },
+  { name: "Đồ dùng & dịch vụ", href: "/admin-supplies", icon: ShoppingBag },
+  // "Thư viện giống" chứ không phải "Giống", để khỏi nhầm với các bé đang bán:
+  // đây là thông tin tra cứu về giống, không phải hàng trong kho.
+  { name: "Thư viện giống", href: "/admin-breeds", icon: BookOpen },
   { name: "Đơn hàng", href: "/admin-orders", icon: ShoppingCart },
   { name: "Yêu cầu Spa", href: "/admin-spa-bookings", icon: Sparkles },
   { name: "Tài khoản", href: "/admin-users", icon: Users },

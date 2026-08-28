@@ -30,9 +30,12 @@ export default function PetCatalog() {
     const onlyPets = products.filter((p) =>
       PET_CATEGORIES.includes(p.category?.slug ?? "")
     );
-    return filter
+    const list = filter
       ? onlyPets.filter((p) => p.category?.slug === filter)
       : onlyPets;
+    // Bé còn lên trước. Trước đây thứ tự theo database nên các bé đã có chủ có
+    // thể chiếm hết hàng đầu, khách cuộn một đoạn mới thấy bé thật sự mua được.
+    return [...list].sort((a, b) => Number(b.stock > 0) - Number(a.stock > 0));
   }, [products, filter]);
 
   return (

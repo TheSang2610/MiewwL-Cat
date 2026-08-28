@@ -1,9 +1,12 @@
 "use client";
 
+import { useEffect } from "react";
 import { PetGender } from "@/lib/types";
+import { useBreedStore } from "@/store/breed-store";
 
 export interface PetFieldValues {
-  breed: string;
+  /** Khoá giống chọn từ thư viện. Rỗng nghĩa là chưa gắn giống nào. */
+  breedId: string;
   age: string;
   gender: "" | PetGender;
   tags: string;
@@ -16,7 +19,7 @@ export interface PetFieldValues {
 }
 
 export const EMPTY_PET_FIELDS: PetFieldValues = {
-  breed: "",
+  breedId: "",
   age: "",
   gender: "",
   tags: "",
@@ -31,7 +34,9 @@ export const EMPTY_PET_FIELDS: PetFieldValues = {
 /** Chuyển giá trị form (toàn chuỗi) sang payload gửi API. */
 export function toPetPayload(values: PetFieldValues) {
   return {
-    breed: values.breed || undefined,
+    // Gửi `null` khi bỏ chọn để backend gỡ liên kết; `undefined` sẽ bị bỏ qua
+    // và giống cũ dính lại mãi. Tên giống hiển thị do backend tự điền.
+    breedId: values.breedId || null,
     age: values.age || undefined,
     gender: values.gender || null,
     tags: values.tags
@@ -61,6 +66,16 @@ export default function PetFields({
   values: PetFieldValues;
   onChange: (patch: Partial<PetFieldValues>) => void;
 }) {
+  const breeds = useBreedStore((s) => s.breeds);
+  const fetchBreeds = useBreedStore((s) => s.fetchBreeds);
+
+  // Form sản phẩm có thể mở thẳng bằng URL, không đi qua trang Thư viện giống,
+  // nên phải tự nạp danh sách — nếu không ô chọn giống rỗng và người dùng tưởng
+  // là chưa có giống nào.
+  useEffect(() => {
+    if (breeds.length === 0) fetchBreeds();
+  }, [breeds.length, fetchBreeds]);
+
   return (
     <fieldset className="space-y-4 rounded-2xl border border-brand-deep/10 bg-brand-cream/40 p-4">
       <legend className="px-1 text-xs font-semibold text-brand-deep">
@@ -73,13 +88,22 @@ export default function PetFields({
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>Giống</label>
-          <input
-            type="text"
-            value={values.breed}
-            onChange={(e) => onChange({ breed: e.target.value })}
-            className={inputClass}
-            placeholder="Ví dụ: British Shorthair"
-          />
+          <select
+            value={values.breedId}
+            onChange={(e) => onChange({ breedId: e.target.value })}
+            className={`${inputClass} bg-white`}
+          >
+            <option value="">— Không thuộc giống nào —</option>
+            {breeds.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.species === "CAT" ? "Mèo" : "Chó"} · {b.name}
+              </option>
+            ))}
+          </select>
+          <p className="mt-1 text-[11px] text-brand-deep/40">
+            Chọn từ Thư viện giống. Chính ô này quyết định bé hiện ở trang giống
+            nào và giống đó có báo &quot;còn bé&quot; hay không.
+          </p>
         </div>
         <div>
           <label className={labelClass}>Tuổi</label>

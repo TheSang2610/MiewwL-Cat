@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { breedLinkData } from "@/lib/breed-link";
 import { handle, ok } from "@/lib/http";
 import { requireRole } from "@/lib/auth";
 import { productInput, slugify } from "@/lib/schemas";
@@ -33,6 +34,7 @@ export const POST = handle(async (req: Request) => {
   await requireRole(req, "ADMIN");
 
   const body = productInput.parse(await req.json());
+  const breedFields = await breedLinkData(body.breedId);
 
   const product = await prisma.product.create({
     data: {
@@ -42,7 +44,6 @@ export const POST = handle(async (req: Request) => {
       price: body.price,
       description: body.description,
       images: body.images,
-      breed: body.breed,
       age: body.age,
       stock: body.stock,
       published: body.published,
@@ -55,6 +56,9 @@ export const POST = handle(async (req: Request) => {
       weight: body.weight,
       color: body.color,
       suitability: body.suitability,
+      // Ghi cuối để `breed` (tên hiển thị) luôn khớp giống đã chọn, kể cả khi
+      // client còn gửi kèm chuỗi `breed` cũ.
+      ...breedFields,
     },
     include: { category: true },
   });
