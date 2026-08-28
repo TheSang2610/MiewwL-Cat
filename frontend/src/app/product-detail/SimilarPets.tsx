@@ -18,7 +18,11 @@ export default function SimilarPets({ product }: { product: Product }) {
     [categorySlug]
   );
 
-  const similar = (pool ?? []).filter((p) => p.id !== product.id).slice(0, 4);
+  // Chỉ gợi ý bé còn. Gợi ý một bé đã có chủ cho khách đang tìm mua là dẫn họ
+  // vào ngõ cụt.
+  const similar = (pool ?? [])
+    .filter((p) => p.id !== product.id && p.stock > 0)
+    .slice(0, 4);
 
   if (similar.length === 0) return null;
 

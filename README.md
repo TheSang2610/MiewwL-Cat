@@ -179,6 +179,17 @@ layout: sidebar + chặn theo vai trò.
 Mỗi bé đang bán **chọn một giống** từ Thư viện giống. Chính liên kết đó quyết định
 bé hiện ở trang giống nào, và giống đó báo "Đang có N bé" hay "Tạm hết bé".
 
+**Tồn kho tự điều khiển trang khách, không phải bật tắt tay:**
+
+| Tồn kho | Trang khách |
+|---|---|
+| `0` | Bé rút khỏi trang chủ, `/cho`, `/meo` và mục gợi ý. Giống báo "Tạm hết bé". Link cũ của bé vẫn vào được, kèm nút sang trang giống và nút để lại số. |
+| `≥ 1` | Bé hiện lại ở mọi khu đang bán. Giống báo "Đang có N bé". |
+
+Không có nút "ẩn/hiện" riêng cho việc này — sửa tồn kho là đủ. Bày một bé đã có
+chủ ra khu "đang tìm chủ mới" chỉ làm khách hụt hẫng, còn giấu hẳn trang bé đó
+đi thì link cũ khách đã lưu sẽ chết.
+
 Trước đây ô Giống là ô gõ tay, nên gõ "Poodle" trong khi thư viện tên "Poodle
 Tiny" là trượt: trang Poodle Tiny báo hết bé dù kho còn 5 con. Giờ là ô chọn từ
 danh sách nên không lệch được nữa.

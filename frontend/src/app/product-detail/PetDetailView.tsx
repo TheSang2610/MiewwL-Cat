@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, House } from "lucide-react";
 import { Product } from "@/lib/types";
@@ -11,6 +11,7 @@ import { useContent, useTranslated } from "@/lib/content-i18n";
 import UsdHint from "@/components/storefront/UsdHint";
 import { WARRANTY_TIERS } from "./warranty-tiers";
 import SimilarPets from "./SimilarPets";
+import { useBreedStore } from "@/store/breed-store";
 import WarrantyFaq from "./WarrantyFaq";
 
 /** Thú cưng là hàng theo con, khách xem trực tiếp trước khi cọc — không qua giỏ hàng. */
@@ -27,6 +28,18 @@ export default function PetDetailView({ product }: { product: Product }) {
   useDocumentTitle(c(product.name));
 
   const available = product.stock > 0;
+
+  // Bé đã có chủ thì lối đi tiếp là trang giống của bé: ở đó khách xem được
+  // giống này, thấy còn bé nào khác không, và để lại số chờ bé mới về. Nếu
+  // không, trang này là ngõ cụt.
+  const breeds = useBreedStore((s) => s.breeds);
+  const fetchBreeds = useBreedStore((s) => s.fetchBreeds);
+  useEffect(() => {
+    if (!available && breeds.length === 0) fetchBreeds();
+  }, [available, breeds.length, fetchBreeds]);
+  const breedOfPet = product.breedId
+    ? breeds.find((b) => b.id === product.breedId)
+    : undefined;
   const isCat = product.category?.slug === "meo";
   const speciesLabel = isCat ? t("species.catTitle") : t("species.dogTitle");
   const speciesHref = isCat ? "/meo" : "/cho";
@@ -120,8 +133,24 @@ export default function PetDetailView({ product }: { product: Product }) {
               </a>
             </div>
           ) : (
-            <div className="mt-5 rounded-2xl bg-brand-deep/5 px-4 py-3.5 text-center text-sm text-brand-deep/50">
-              {t("petDetail.alreadyAdopted")}
+            <div className="mt-5 space-y-2">
+              <div className="rounded-2xl bg-brand-deep/5 px-4 py-3.5 text-center text-sm text-brand-deep/50">
+                {t("petDetail.alreadyAdopted")}
+              </div>
+              {breedOfPet && (
+                <Link
+                  href={`/breed-detail?slug=${breedOfPet.slug}`}
+                  className="block w-full rounded-full bg-brand-deep py-3.5 text-center text-base font-medium text-white transition-all hover:bg-brand-deep/90"
+                >
+                  {t("petDetail.seeBreed", { breed: breedOfPet.name })}
+                </Link>
+              )}
+              <a
+                href={INQUIRY_PHONE}
+                className="block w-full rounded-full border border-brand-deep/20 py-3 text-center text-base font-medium text-brand-deep transition-all hover:bg-brand-deep/5"
+              >
+                {t("petDetail.notifyMe")}
+              </a>
             </div>
           )}
 

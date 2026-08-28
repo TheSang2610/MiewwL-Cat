@@ -78,6 +78,7 @@ export const vi = {
   "petCatalog.all": "Tất cả",
   "petCatalog.loading": "Đang tải các bé...",
   "petCatalog.empty": "Hiện chưa có bé nào trong danh mục này.",
+  "petCatalog.emptyHint": "Xem các giống bên dưới rồi để lại số — shop báo ngay khi có bé mới về.",
   "petCatalog.allDogs": "Xem tất cả Chó →",
   "petCatalog.allCats": "Xem tất cả Mèo →",
 
@@ -338,6 +339,8 @@ export const vi = {
   "petDetail.interestedShort": "Tôi quan tâm →",
   "petDetail.bookVisit": "Đặt lịch đến xem bé",
   "petDetail.alreadyAdopted": "Bé này đã có chủ mới",
+  "petDetail.seeBreed": "Xem giống {breed} →",
+  "petDetail.notifyMe": "Báo tôi khi có bé mới về",
   "petDetail.warranty30": "Bảo hành sức khỏe 30 ngày",
   "petDetail.purebredForLife": "Thuần chủng trọn đời",
   "petDetail.freeVaccine": "Miễn phí {count} mũi tiêm đầu",
@@ -872,6 +875,7 @@ export const en: Record<MessageKey, string> = {
   "petCatalog.all": "All",
   "petCatalog.loading": "Loading pets...",
   "petCatalog.empty": "No pets in this category yet.",
+  "petCatalog.emptyHint": "Browse the breeds below and leave your number — we'll call you as soon as one arrives.",
   "petCatalog.allDogs": "See all dogs →",
   "petCatalog.allCats": "See all cats →",
 
@@ -1132,6 +1136,8 @@ export const en: Record<MessageKey, string> = {
   "petDetail.interestedShort": "I'm interested →",
   "petDetail.bookVisit": "Book a visit to meet them",
   "petDetail.alreadyAdopted": "This pet has already found a home",
+  "petDetail.seeBreed": "See the {breed} breed →",
+  "petDetail.notifyMe": "Tell me when a new one arrives",
   "petDetail.warranty30": "30-day health warranty",
   "petDetail.purebredForLife": "Purebred for life",
   "petDetail.freeVaccine": "First {count} vaccine doses free",

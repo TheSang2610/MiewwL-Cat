@@ -33,9 +33,10 @@ export default function PetCatalog() {
     const list = filter
       ? onlyPets.filter((p) => p.category?.slug === filter)
       : onlyPets;
-    // Bé còn lên trước. Trước đây thứ tự theo database nên các bé đã có chủ có
-    // thể chiếm hết hàng đầu, khách cuộn một đoạn mới thấy bé thật sự mua được.
-    return [...list].sort((a, b) => Number(b.stock > 0) - Number(a.stock > 0));
+    // Chỉ hiện bé còn. Bé đã có chủ thì rút khỏi đây, phần giới thiệu giống ở
+    // dưới lo tiếp — khách vẫn xem được giống đó và để lại số chờ bé mới về.
+    // Bày một bé đã có chủ ra khu "đang tìm chủ mới" chỉ làm khách hụt hẫng.
+    return list.filter((p) => p.stock > 0);
   }, [products, filter]);
 
   return (
@@ -78,9 +79,12 @@ export default function PetCatalog() {
         ) : error ? (
           <ErrorMessage message={error} onRetry={() => fetchProducts({ published: true })} />
         ) : pets.length === 0 ? (
-          <p className="py-16 text-center text-sm text-brand-deep/60">
-            {t("petCatalog.empty")}
-          </p>
+          <div className="py-14 text-center">
+            <p className="text-sm text-brand-deep/60">{t("petCatalog.empty")}</p>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-brand-deep/45">
+              {t("petCatalog.emptyHint")}
+            </p>
+          </div>
         ) : (
           <div className="mt-10 grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-4">
             {pets.map((pet, index) => (
