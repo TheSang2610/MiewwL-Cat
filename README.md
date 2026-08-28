@@ -177,6 +177,20 @@ Muốn bản tiếng Anh hiện đúng thì thêm một dòng vào
 Sửa `backend/prisma/breeds-extra.ts` rồi chạy `npm run db:breeds`. Lệnh này chỉ
 thêm/cập nhật theo `slug`, **không xoá** đơn hàng hay tài khoản.
 
+### Ảnh tải lên không hiện ở trang khách (chỉ khi chạy ở máy)
+Nếu ảnh hiện trong trang quản trị mà mất ở trang khách: hai nơi đi hai đường
+khác nhau — quản trị dùng thẻ `<img>` thường, trang khách dùng `next/image` nên
+phải qua bộ tối ưu ảnh. Next 16 chặn bộ tối ưu lấy ảnh từ host phân giải ra IP
+nội bộ (chống SSRF), mà khi chạy ở máy thì backend chính là `localhost:3001`.
+
+Đã xử lý bằng `images.dangerouslyAllowLocalIP` trong `next.config.ts`, chỉ bật ở
+chế độ dev. Trên Vercel backend là tên miền công khai nên không dính, và bản
+chạy thật vẫn giữ nguyên lớp chống SSRF.
+
+Dấu hiệu nhận ra: log của `next dev` in `hostname resolved to private IP`. Đừng
+tin câu lỗi HTTP trả về — Next dùng chung câu `"url" parameter is not allowed`
+cho cả trường hợp này lẫn trường hợp sai `remotePatterns`, rất dễ đi nhầm hướng.
+
 ### Đổi ảnh sản phẩm / giống
 **Cách nhanh nhất:** mở form sửa trong trang quản trị → bấm **"Tải ảnh từ máy"**.
 Ảnh được lưu thẳng trong database và phục vụ qua `/api/uploads/<id>`, không cần

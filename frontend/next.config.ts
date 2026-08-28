@@ -47,6 +47,22 @@ const nextConfig: NextConfig = {
     // Ảnh giống/phụ kiện đều đã nén sẵn ở 1200px, không cần bộ kích thước lớn hơn.
     imageSizes: [64, 96, 128, 256, 384],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+
+    /**
+     * Next 16 chặn tối ưu ảnh khi tên miền nguồn phân giải ra IP nội bộ, để
+     * chống SSRF — kẻ xấu không mượn được server của mình đi đọc dịch vụ trong
+     * mạng riêng.
+     *
+     * Nhưng khi chạy ở máy, backend CHÍNH LÀ `localhost:3001`, tức `127.0.0.1`.
+     * Nên ảnh shop tải lên hiện bình thường trong trang quản trị (chỗ đó dùng
+     * thẻ `<img>` thường) mà biến mất ở trang khách (chỗ đó dùng `next/image`).
+     * Triệu chứng khó đoán vì Next trả về đúng câu lỗi của trường hợp sai
+     * `remotePatterns`, dù `remotePatterns` không liên quan.
+     *
+     * Chỉ mở ở chế độ dev. Trên Vercel backend là tên miền công khai nên không
+     * dính, và để `false` giữ nguyên lớp chống SSRF cho bản chạy thật.
+     */
+    dangerouslyAllowLocalIP: process.env.NODE_ENV !== "production",
   },
   // Tắt header "X-Powered-By: Next.js" — không cần khoe stack cho người lạ.
   poweredByHeader: false,
