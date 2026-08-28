@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="MiewwL Pet House">
+  <rect width="400" height="400" fill="#FAF3E7"/>
+  <g fill="none" stroke="#C9A86A" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" opacity="0.55">
+    <path d="M148 214c-14 12-22 27-18 41 5 16 24 24 44 24h52c20 0 39-8 44-24 4-14-4-29-18-41-13-11-27-21-52-21s-39 10-52 21z"/>
+    <ellipse cx="128" cy="168" rx="20" ry="26"/>
+    <ellipse cx="176" cy="140" rx="19" ry="26"/>
+    <ellipse cx="224" cy="140" rx="19" ry="26"/>
+    <ellipse cx="272" cy="168" rx="20" ry="26"/>
+  </g>
+  <text x="200" y="340" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="24" fill="#C9A86A" opacity="0.7">MiewwL Pet House</text>
+</svg>

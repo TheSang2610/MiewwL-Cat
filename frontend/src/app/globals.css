@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-cream: #FFF6E6;
+  --color-brand-deep: #192223;
+  --color-brand-gold: #C5A880;
+  --color-brand-pink: #FFCFE9;
+  --color-brand-mint: #9DD1D3;
+  --font-montserrat: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-serif-brand: Georgia, "Times New Roman", serif;
+}
+
+/* Respect users who ask the OS to reduce motion: reveal/typewriter
+   transitions collapse to an instant state change. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

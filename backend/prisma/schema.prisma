@@ -1,0 +1,257 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  /// Khách mua hàng — không vào được khu quản trị.
+  CUSTOMER
+  /// Nhân viên cửa hàng — xử lý đơn và lịch spa, không sửa được catalogue.
+  STAFF
+  /// Toàn quyền, gồm cả phân quyền cho tài khoản khác.
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  BANK
+}
+
+/// Tiền đã thực nhận hay chưa — tách khỏi `OrderStatus` vì một đơn có thể
+/// đang giao mà vẫn chưa trả tiền (COD), hoặc đã trả mà chưa gửi đi (BANK).
+enum PaymentStatus {
+  /// Chưa chuyển / chưa thu tiền.
+  UNPAID
+  /// Khách báo đã chuyển khoản, shop chưa đối soát với ngân hàng.
+  PENDING_CONFIRM
+  /// Shop đã thấy tiền vào tài khoản.
+  PAID
+}
+
+enum PetGender {
+  MALE
+  FEMALE
+}
+
+enum Species {
+  DOG
+  CAT
+}
+
+enum BreedSize {
+  SMALL
+  MEDIUM
+  LARGE
+  XLARGE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+/// Yêu cầu giữ chỗ từ máy tính giá spa (/spa). Chưa có lịch/nhân sự thật —
+/// đây là lead để nhân viên gọi lại xác nhận, không phải slot đã chốt.
+model SpaBooking {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  phone         String
+  petName       String?
+  species       Species
+  weightTier    String
+  serviceName   String
+  estimatedPrice Float
+  desiredDate   String
+  status        BookingStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+}
+
+/// Ảnh do cửa hàng tải lên từ trang quản trị.
+///
+/// Lưu thẳng bytes trong MongoDB để không phải phụ thuộc dịch vụ lưu trữ ngoài
+/// (Vercel Blob, Cloudinary, S3) — shop nhỏ vài trăm ảnh thì hoàn toàn đủ.
+/// Khi kho ảnh lớn dần thì nên chuyển sang object storage: chỉ cần đổi phần
+/// đọc/ghi trong `api/uploads`, dữ liệu sản phẩm không đụng tới.
+model Upload {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  filename  String
+  mimeType  String
+  /// Kích thước tính bằng byte, để trang quản trị hiển thị và kiểm tra hạn mức.
+  size      Int
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
+/// Email đăng ký nhận tin ở chân trang. Email là duy nhất để bấm gửi nhiều lần
+/// không tạo ra bản ghi trùng.
+model Subscriber {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  /// Nguồn đăng ký, ví dụ "footer" — để sau này biết form nào hiệu quả.
+  source    String   @default("footer")
+  createdAt DateTime @default(now())
+}
+
+/// Catalogue các giống shop có thể tìm/đặt cọc — khác với Product là bé đang có sẵn.
+model Breed {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String   @unique
+  /// Tên gọi khác, ví dụ "Corgi có đuôi"
+  alias       String?
+  description String   @default("")
+  species     Species
+  size        BreedSize
+  /// Khoảng cân nặng trưởng thành, ví dụ "3-5kg"
+  weightRange String?
+  priceMin    Float
+  priceMax    Float
+  image       String?
+  /// Ảnh gallery cho trang chi tiết giống; rỗng thì trang chi tiết dùng `image`.
+  images      String[]
+  tags        String[]
+  /// Mẹo chăm sóc ngắn cho trang /cham-soc — mỗi phần tử là 1 tip.
+  careGuide   String[]
+  /// Đoạn mô tả "Phù hợp với" trên trang chi tiết giống.
+  suitability String?
+  /// Đoạn lưu ý chăm sóc ngắn trên trang chi tiết giống (khác `careGuide`).
+  careNotes   String?
+  /// Cảnh báo ngắn nổi bật cạnh giá, ví dụ "Cẩn thận cột sống do chân ngắn".
+  warning     String?
+  /// Các chỉ số tính cách 1-5, để trống thì trang chi tiết ẩn dòng đó.
+  energyLevel       Int?
+  apartmentFriendly Int?
+  kidFriendly       Int?
+  petFriendly       Int?
+  sheddingLevel     Int?
+  groomingNeeds     Int?
+  trainability      Int?
+  barkingLevel      Int?
+  position    Int      @default(0)
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  /// Bản tiếng Anh do shop tự nhập (xem ghi chú ở model Product).
+  aliasEn       String?
+  descriptionEn String?
+  suitabilityEn String?
+  careNotesEn   String?
+}
+
+model User {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  name         String?
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CUSTOMER)
+  /// Điền sẵn vào form thanh toán khi khách đã đăng nhập.
+  phone        String?
+  address      String?
+  city         String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders Order[]
+  /// Token phát TRƯỚC mốc này bị coi là hết hiệu lực. Đặt lại khi đăng xuất
+  /// hoặc đổi mật khẩu, để phiên cũ chết ngay thay vì sống hết 7 ngày.
+  sessionsValidFrom DateTime?
+}
+
+model Category {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  slug     String    @unique
+  products Product[]
+}
+
+model Product {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  slug        String   @unique
+  description String   @default("")
+  price       Float
+  images      String[]
+  breed       String?
+  age         String?
+  stock       Int      @default(0)
+  published   Boolean  @default(true)
+
+  /// Nhóm nhỏ trong danh mục "Đồ dùng & Phụ kiện" (thuc-an, do-choi, ...),
+  /// dùng để chia section ở trang /phu-kien. Thú cưng/spa để trống.
+  subCategory String?
+
+  // Chỉ áp dụng cho thú cưng; phụ kiện/dịch vụ để trống.
+  gender       PetGender?
+  tags         String[]
+  vaccineDoses Int?
+  warranty     Boolean    @default(false)
+  /// Ngày sinh dạng hiển thị (không phải Date thật — chỉ để show, vd "13/5/2026")
+  birthDate    String?
+  /// Cân nặng hiện tại, vd "0.5 kg"
+  weight       String?
+  color        String?
+  /// Mô tả ngắn "phù hợp với ai" cho trang chi tiết
+  suitability  String?
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  categoryId String   @db.ObjectId
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  orderItems OrderItem[]
+  /// Bản tiếng Anh do shop tự nhập. Bỏ trống thì site tra từ điển
+  /// `content-en.ts`, không có nữa thì giữ nguyên tiếng Việt.
+  nameEn        String?
+  descriptionEn String?
+  suitabilityEn String?
+}
+
+model Order {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  customerName  String
+  phone         String
+  address       String
+  city          String
+  note          String?
+  totalPrice    Float
+  paymentMethod PaymentMethod @default(COD)
+  status        OrderStatus   @default(PENDING)
+  paymentStatus PaymentStatus @default(UNPAID)
+  /// Thời điểm shop xác nhận tiền đã vào tài khoản.
+  paidAt        DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  userId String? @db.ObjectId
+  user   User?   @relation(fields: [userId], references: [id])
+
+  items OrderItem[]
+}
+
+model OrderItem {
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  quantity Int     @default(1)
+  // Snapshot of the product at purchase time, so later edits don't rewrite history.
+  name     String
+  image    String?
+  price    Float
+
+  orderId String @db.ObjectId
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String  @db.ObjectId
+  product   Product @relation(fields: [productId], references: [id])
+}

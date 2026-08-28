@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -14,11 +14,11 @@
 /coverage
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
 
 # misc
 .DS_Store
@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# cau hinh cong cu AI cuc bo (chua symlink tro ra ngoai may nay)
+.claude/
+.windsurf/
+
+# tai lieu Prisma tai ve tu prisma/skills — tai lai duoc bang skills-lock.json
+.agents/skills/
+
+# log cua dev server
+*.log
