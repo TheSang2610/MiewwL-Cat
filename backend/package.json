@@ -13,7 +13,8 @@
     "db:studio": "prisma studio",
     "db:images": "tsx prisma/update-images.ts",
     "postinstall": "prisma generate",
-    "db:breeds": "tsx prisma/sync-breeds.ts"
+    "db:breeds": "tsx prisma/sync-breeds.ts",
+    "admin:password": "tsx scripts/set-admin-password.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

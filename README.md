@@ -205,6 +205,19 @@ Ngay trong form quản trị, mở khối **"Bản tiếng Anh (không bắt bu�
 đó là bản EN hiện đúng ngay, không cần sửa code. Bỏ trống thì site tra từ điển
 `content-en.ts`; không có trong từ điển nữa thì giữ nguyên tiếng Việt.
 
+### Quản trị viên quên mật khẩu
+Không bấm được nút "Đặt lại mật khẩu" ở trang phân quyền (vì không đăng nhập
+được), mà cũng không chạy `db:seed` được (seed xoá sạch đơn hàng và sản phẩm).
+Dùng script trong `backend`:
+
+```bash
+npm run admin:password -- "mat-khau-moi-that-dai"
+npm run admin:password -- "mat-khau-moi" email@khac.com   # đổi cho người khác
+```
+
+Script sửa đúng database mà `DATABASE_URL` đang trỏ tới, và đá mọi thiết bị
+đang đăng nhập tài khoản đó ra.
+
 ### Đổi mật khẩu
 Khách và nhân viên tự đổi ở `/tai-khoan`. Phải nhập lại mật khẩu hiện tại.
 
