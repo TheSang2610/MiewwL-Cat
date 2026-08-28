@@ -205,6 +205,35 @@ Ngay trong form quản trị, mở khối **"Bản tiếng Anh (không bắt bu�
 đó là bản EN hiện đúng ngay, không cần sửa code. Bỏ trống thì site tra từ điển
 `content-en.ts`; không có trong từ điển nữa thì giữ nguyên tiếng Việt.
 
+### Sao lưu database
+```bash
+npm run db:backup -- "$DATABASE_URL" ../backup-2026-08-29.json
+```
+Xuất mọi bảng ra một file JSON (ảnh trong bảng `upload` đổi sang base64). Chạy
+trước mỗi lần đụng vào dữ liệu thật. **Đừng để file này trong repo** — nó chứa
+tên, số điện thoại và địa chỉ của khách.
+
+### Chuyển sang database khác
+MongoDB không có lệnh đổi tên database, và Atlas cũng không có nút đó — muốn
+đổi tên, hoặc muốn tách database thật khỏi database chạy thử, đều là chép sang
+rồi bỏ cái cũ:
+
+```bash
+npm run db:backup -- "<url-cu>" ../backup.json     # sao lưu trước đã
+npm run db:copy -- "<url-cu>" "<url-moi>"          # chi chep, khong xoa gi
+npm run db:verify-copy -- "<url-cu>" "<url-moi>"   # doi chieu sau
+npm run db:count -- "<url>"                        # dem nhanh mot ben
+```
+
+`db:copy` giữ nguyên `id` của mọi bản ghi nên các liên kết (đơn ↔ dòng hàng,
+sản phẩm ↔ danh mục) vẫn trỏ đúng, và nó từ chối chạy nếu database đích đã có
+dữ liệu. `db:verify-copy` mới là bước quan trọng: đếm bằng nhau không chứng minh
+được gì, vì nếu `id` bị sinh lại thì số lượng vẫn khớp trong khi mọi liên kết
+đã đứt.
+
+Đổi `DATABASE_URL` sang database mới, chạy lại, xác nhận web đúng rồi mới xoá
+database cũ trong Atlas.
+
 ### Quản trị viên quên mật khẩu
 Không bấm được nút "Đặt lại mật khẩu" ở trang phân quyền (vì không đăng nhập
 được), mà cũng không chạy `db:seed` được (seed xoá sạch đơn hàng và sản phẩm).

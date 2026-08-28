@@ -14,6 +14,10 @@
     "db:images": "tsx prisma/update-images.ts",
     "postinstall": "prisma generate",
     "db:breeds": "tsx prisma/sync-breeds.ts",
+    "db:backup": "tsx scripts/db-backup.ts",
+    "db:count": "tsx scripts/db-count.ts",
+    "db:copy": "tsx scripts/db-copy.ts",
+    "db:verify-copy": "tsx scripts/db-verify-copy.ts",
     "admin:password": "tsx scripts/set-admin-password.ts"
   },
   "dependencies": {
